@@ -330,3 +330,7 @@ ASALocalRun/
 .mfractor/
 
 *.DS_Store
+
+config.json
+
+
