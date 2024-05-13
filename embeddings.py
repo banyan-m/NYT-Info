@@ -8,13 +8,12 @@ with open('config.json') as f:
     config = json.load(f)
 Openapi_key = config['openAIKey']
 
-
 # Connect to the SQLite database
-conn = sqlite3.connect('your_database.db')
+conn = sqlite3.connect('nyt_articles.db')
 c = conn.cursor()
 
 # Query the data
-c.execute('SELECT your_column FROM your_table')
+c.execute('SELECT title, keywords FROM articles LIMIT 10')
 rows = c.fetchall()
 
 # Close the connection
@@ -27,7 +26,7 @@ headers = {'Authorization': Openapi_key, 'Content-Type': 'application/json'}
 # Get the embeddings for each entry
 embeddings = []
 for row in rows:
-    data = {'prompt': row[0], 'max_tokens': 1}
+    data = {'prompt': ' '.join(row), 'max_tokens': 1}
     response = requests.post(url, headers=headers, json=data)
     embeddings.append(response.json()['choices'][0]['embeddings'])
 
