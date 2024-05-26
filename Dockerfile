@@ -3,3 +3,6 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:0-3.8
 
 # Install SQLite3
 RUN apt-get update && apt-get install -y sqlite3
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt

@@ -1,5 +1,6 @@
 flask
-requests>=2.25.1
+requests
 beautifulsoup4>=4.9.3
 warcio>=1.7.4
 scikit-learn
+openai
