@@ -17,8 +17,13 @@ openai.api_key = OAIapi_key
 conn = sqlite3.connect('nyt_articles.db')  # replace with your database name
 cursor = conn.cursor()
 
+cursor.execute("PRAGMA table_info(articles)")
+columns = [column[1] for column in cursor.fetchall()]
+if "snipembedding" not in columns:
+    cursor.execute("ALTER TABLE articles ADD COLUMN snipembedding TEXT")
+
 # Write your SQL query here
-query = "SELECT snippet FROM articles LIMIT 5"  # replace with your query
+query = "SELECT rowid, snippet FROM articles LIMIT 5"  # replace with your query
 
 # Execute the query and fetch all results
 cursor.execute(query)
@@ -26,13 +31,17 @@ rows = cursor.fetchall()
 
 # Loop through the rows and create embeddings
 for row in rows:
-    text = row[0]  # replace 0 with the index of the text in each row
+    rowid = row[0]
+    text = row[1]
     response = openai.embeddings.create(
         model="text-embedding-3-large",
         input=text,
         encoding_format="float"
     )
-    print(response.data[0].embedding)
+    embedding = response.data[0].embedding
+
+    cursor.execute("UPDATE articles SET snipembedding = ? WHERE rowid = ?", (json.dumps(embedding), rowid))
+
 
 # Close the connection
 conn.close()
