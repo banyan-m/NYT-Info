@@ -33,15 +33,19 @@ rows = cursor.fetchall()
 for row in rows:
     rowid = row[0]
     text = row[1]
-    response = openai.embeddings.create(
-        model="text-embedding-3-large",
-        input=text,
-        encoding_format="float"
-    )
-    embedding = response.data[0].embedding
+    try:
+        response = openai.embeddings.create(
+            model="text-embedding-3-large",
+            input=text,
+            encoding_format="float"
+        )
+        embedding = response.data[0].embedding
 
-    cursor.execute("UPDATE articles SET snipembedding = ? WHERE rowid = ?", (json.dumps(embedding), rowid))
+        cursor.execute("UPDATE articles SET snipembedding = ? WHERE rowid = ?", (json.dumps(embedding), rowid))
+    except Exception as e:
+        print(f"Failed to create embedding for row {rowid}: {e}")
 
 
 # Close the connection
+conn.commit()
 conn.close()
