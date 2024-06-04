@@ -23,7 +23,7 @@ if "snipembedding" not in columns:
     cursor.execute("ALTER TABLE articles ADD COLUMN snipembedding TEXT")
 
 # Write your SQL query here
-query = "SELECT rowid, snippet FROM articles LIMIT 5"  # replace with your query
+query = "SELECT rowid, snippet FROM articles WHERE snipembedding IS NULL LIMIT 1000"  # replace with your query
 
 # Execute the query and fetch all results
 cursor.execute(query)
