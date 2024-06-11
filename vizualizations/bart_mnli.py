@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import sqlite3
-from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import pipeline
 
 
 
