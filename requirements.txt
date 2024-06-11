@@ -4,5 +4,6 @@ beautifulsoup4>=4.9.3
 warcio>=1.7.4
 scikit-learn
 openai
+torch
 matplotlib
 transformers

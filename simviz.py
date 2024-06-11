@@ -2,23 +2,32 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import sqlite3
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer
 
-nli_model = AutoModelForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
-tokenizer = AutoTokenizer.from_pretrained('facebook/bart-large-mnli')
 
-# Assume embeddings is a list of your embeddings
-embeddings = [embedding1, embedding2, ...]
 
-# Use PCA to reduce the dimensionality to 50 dimensions
-pca = PCA(n_components=50)
-embeddings_pca = pca.fit_transform(embeddings)
+# Establish a connection to the SQLite database
+conn = sqlite3.connect('nyt_articles.db')
 
-# Use t-SNE to reduce the dimensionality to 2 dimensions
-tsne = TSNE(n_components=2)
-embeddings_tsne = tsne.fit_transform(embeddings_pca)
+# Create a cursor object
+cur = conn.cursor()
 
-# Plot the embeddings
-plt.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1])
-plt.show()
+# Execute a query to fetch the data
+cur.execute("SELECT snippet FROM articles WHERE snipembedding IS NOT NULL LIMIT 10")
+rows = cur.fetchall()
 
+# Close the database connection
+cur.close()
+conn.close()
+
+# Load the zero-shot classification pipeline
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+
+# Specify the candidate labels
+candidate_labels = ['happy', 'sad', 'angry']
+
+# Classify the sequences
+for row in rows:
+    sequence_to_classify = row[0]
+    result = classifier(sequence_to_classify, candidate_labels)
+    print(result)
