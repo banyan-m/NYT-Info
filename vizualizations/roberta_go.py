@@ -14,7 +14,7 @@ conn = sqlite3.connect('nyt_articles.db')
 cur = conn.cursor()
 
 # Execute a query to fetch the data
-cur.execute("SELECT snippet FROM articles WHERE snipembedding IS NOT NULL LIMIT 10")
+cur.execute("SELECT snippet FROM articles WHERE snipembedding IS NOT NULL LIMIT 1000")
 rows = cur.fetchall()
 
 # Close the database connection
@@ -47,5 +47,11 @@ print(plt.get_backend())
 plt.bar(emotion_scores.keys(), emotion_scores.values())
 plt.xlabel('Emotion')
 plt.ylabel('Total Score')
-plt.title('Emotion Scores from Roberta Model')
-plt.show()
+plt.title('NYT Snippet Emotion Scores from Roberta Model')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+plt.savefig('graphs/roberta/Snippet_emotion_scores1000.png')
+
+
+plt.close()  # Close the figure
